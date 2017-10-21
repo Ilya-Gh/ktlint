@@ -9,33 +9,121 @@ import org.testng.annotations.Test
 class NoConsecutiveBlankLinesRuleTest {
 
     @Test
-    fun testLint() {
-        assertThat(NoConsecutiveBlankLinesRule().lint("fun main() {\n\n\n}")).isEqualTo(listOf(
-            LintError(3, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
+    fun testLintInDeclarations() {
+        assertThat(NoConsecutiveBlankLinesRule().lint(
+            """fun a() {
+
+            }
+
+
+            fun b() {
+            }"""
+        )).isEqualTo(listOf(
+            LintError(2, 1, "no-consecutive-blank-lines", "Needless blank line(s)"),
+            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
         ))
-        assertThat(NoConsecutiveBlankLinesRule().lint("fun main() {println(\"\"\"\n\n\n\"\"\")}")).isEmpty()
     }
 
     @Test
-    fun testFormat() {
+    fun testLintInCode() {
+        assertThat(NoConsecutiveBlankLinesRule().lint(
+            """fun main() {
+                fun a()
+                fun b()
+
+
+                fun c()
+            }"""
+        )).isEqualTo(listOf(
+            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
+        ))
+    }
+
+    @Test
+    fun testLintBeforeRbrace() {
+        assertThat(NoConsecutiveBlankLinesRule().lint(
+            """fun main() {
+                fun a()
+                fun b()
+
+            }"""
+        )).isEqualTo(listOf(
+            LintError(4, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
+        ))
+    }
+
+    @Test
+    fun testLintInString() {
+        assertThat(NoConsecutiveBlankLinesRule().lint(
+            "fun main() {println(\"\"\"\n\n\n\"\"\")}")).isEmpty()
+    }
+
+    @Test
+    fun testFormatInDeclarations() {
         assertThat(NoConsecutiveBlankLinesRule().format(
             """
-            fun main() {
-
+            fun a() {
 
             }
 
 
+            fun b() {
 
+            }
             """
         )).isEqualTo(
             """
-            fun main() {
-
+            fun a() {
             }
 
+            fun b() {
+            }
             """
         )
     }
 
+    @Test
+    fun testFormatInCode() {
+        assertThat(NoConsecutiveBlankLinesRule().format(
+            """
+            fun main() {
+                fun a()
+                fun b()
+
+
+                fun c()
+
+            }
+            """
+        )).isEqualTo(
+            """
+            fun main() {
+                fun a()
+                fun b()
+
+                fun c()
+            }
+            """
+        )
+    }
+
+    @Test
+    fun testFormatBeforeRbrace() {
+        assertThat(NoConsecutiveBlankLinesRule().format(
+            """
+            fun main() {
+                fun a()
+                fun b()
+
+            }
+            """
+        )).isEqualTo(
+            """
+            fun main() {
+                fun a()
+                fun b()
+            }
+            """
+        )
+    }
 }
