@@ -7,7 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.testng.annotations.Test
 
 class NoConsecutiveBlankLinesRuleTest {
-
     @Test
     fun testLintInDeclarations() {
         assertThat(NoConsecutiveBlankLinesRule().lint(
@@ -17,11 +16,10 @@ class NoConsecutiveBlankLinesRuleTest {
 
 
             fun b() {
+
             }"""
         )).isEqualTo(listOf(
-            LintError(2, 1, "no-consecutive-blank-lines", "Needless blank line(s)"),
-            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
-        ))
+            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")))
     }
 
     @Test
@@ -35,21 +33,7 @@ class NoConsecutiveBlankLinesRuleTest {
                 fun c()
             }"""
         )).isEqualTo(listOf(
-            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
-        ))
-    }
-
-    @Test
-    fun testLintBeforeRbrace() {
-        assertThat(NoConsecutiveBlankLinesRule().lint(
-            """fun main() {
-                fun a()
-                fun b()
-
-            }"""
-        )).isEqualTo(listOf(
-            LintError(4, 1, "no-consecutive-blank-lines", "Needless blank line(s)")
-        ))
+            LintError(5, 1, "no-consecutive-blank-lines", "Needless blank line(s)")))
     }
 
     @Test
@@ -74,9 +58,11 @@ class NoConsecutiveBlankLinesRuleTest {
         )).isEqualTo(
             """
             fun a() {
+
             }
 
             fun b() {
+
             }
             """
         )
@@ -102,26 +88,7 @@ class NoConsecutiveBlankLinesRuleTest {
                 fun b()
 
                 fun c()
-            }
-            """
-        )
-    }
 
-    @Test
-    fun testFormatBeforeRbrace() {
-        assertThat(NoConsecutiveBlankLinesRule().format(
-            """
-            fun main() {
-                fun a()
-                fun b()
-
-            }
-            """
-        )).isEqualTo(
-            """
-            fun main() {
-                fun a()
-                fun b()
             }
             """
         )
