@@ -194,6 +194,25 @@ class NoUnusedImportsRuleTest {
     }
 
     @Test
+    fun testParentPackImport() {
+        assertThat(
+            NoUnusedImportsRule().lint(
+                """
+                import A.b
+
+                fun main() {
+                    A.b
+                }
+                """.trimIndent()
+            )
+        ).isEqualTo(
+            listOf(
+                LintError(1, 1, "no-unused-imports", "Unused import")
+            )
+        )
+    }
+
+    @Test
     fun testFormat() {
         assertThat(
             NoUnusedImportsRule().format(
